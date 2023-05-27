@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("log_description");
             $table->ulid('news_id')->references('id')->on('news');
+            $table->ulid('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
