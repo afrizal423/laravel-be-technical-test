@@ -38,4 +38,12 @@ interface NewsRepositoryInterface
      * @return void
      */
     public function deleteNews(string $newsId);
+
+    /**
+     * fungsi untuk menghitung data berita
+     *
+     * @param string $newsId
+     * @return integer
+     */
+    public function CountDataNews(string $newsId): int;
 }

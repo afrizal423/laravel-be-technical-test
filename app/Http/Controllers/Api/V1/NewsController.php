@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\NewsHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -44,10 +45,13 @@ class NewsController extends Controller
 
         // ubah ini hari senin
         // untuk data diisi dengan id dari user admin yg telah login
-        $validatedData['user_id'] = User::where("is_admin", true)->inRandomOrder()->first()->id;
+        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
 
+        $validatedData['user_id'] = $userId;
+        $news = $this->NewsRepository->createDataNews($validatedData);
 
-        return response()->json($this->NewsRepository->createDataNews($validatedData), Response::HTTP_CREATED);
+        event(new NewsHistory($news['user_id'], "Created data", $news['id']));
+        return response()->json($news, Response::HTTP_CREATED);
     }
 
     public function updateDataNews(NewsPostRequest $request): JsonResponse
@@ -70,15 +74,44 @@ class NewsController extends Controller
             // jika tidak ada foto
             $validatedData['image_banner'] = $oldData['image_banner'];
         }
-        // echo json_encode($validatedData);
-        return response()->json($this->NewsRepository->updateDataNews($idNews, $validatedData), Response::HTTP_ACCEPTED);
+        // ubah ini hari senin
+        // untuk data diisi dengan id dari user admin yg telah login
+        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
+
+        $validatedData['user_id'] = $userId;
+        $news = $this->NewsRepository->updateDataNews($idNews, $validatedData);
+
+        event(new NewsHistory($news['user_id'], "Update data", $news['id']));
+
+        return response()->json($news, Response::HTTP_ACCEPTED);
     }
 
     public function deleteDataNews(Request $request): JsonResponse
     {
         $idNews = $request->route('id');
-        $this->NewsRepository->deleteNews($idNews);
+        // ubah ini hari senin
+        // untuk data diisi dengan id dari user admin yg telah login
+        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        if ($this->NewsRepository->CountDataNews($idNews) == 1) {
+            // jika terdapat data
+            // hapus image terlebih dahulu
+            $oldData = $this->NewsRepository->getNewsById($idNews);
+            $pathBannerOld = public_path().str_replace(URL::to('/'), "", $oldData['image_banner']);
+            if(file_exists($pathBannerOld))
+            {
+                // hapus file lama distorage
+                unlink($pathBannerOld);
+            }
+
+            $this->NewsRepository->deleteNews($idNews);
+
+            event(new NewsHistory($userId, "Delete data", $idNews));
+
+            return response()->json("sukses menghapus data", Response::HTTP_NO_CONTENT);
+        } else {
+            // jika tidak ada data
+            return response()->json("tidak ada data", Response::HTTP_NOT_FOUND);
+        }
     }
 }

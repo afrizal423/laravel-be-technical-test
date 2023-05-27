@@ -11,5 +11,7 @@ class Log_news extends Model
 
     protected $fillable = [
         'log_description',
+        'news_id',
+        'user_id'
     ];
 }

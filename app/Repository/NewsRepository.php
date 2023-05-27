@@ -61,4 +61,15 @@ class NewsRepository implements NewsRepositoryInterface
     {
         News::destroy($newsId);
     }
+
+    /**
+     * fungsi untuk menghitung data berita
+     *
+     * @param string $newsId
+     * @return integer
+     */
+    public function CountDataNews(string $newsId): int
+    {
+        return News::whereId($newsId)->count();
+    }
 }
