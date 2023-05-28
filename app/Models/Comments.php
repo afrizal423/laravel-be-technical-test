@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\News;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Comments extends Model
 {
@@ -16,4 +18,11 @@ class Comments extends Model
         'news_id'
     ];
 
+    public function author(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function news(){
+        return $this->belongsTo(News::class);
+    }
 }

@@ -10,6 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsPostRequest;
+use App\Http\Resources\NewsCollection;
+use App\Http\Resources\NewsInsertUpdateResponse;
+use App\Http\Resources\NewsResources;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\NewsRepositoryInterface;
 
@@ -24,16 +27,16 @@ class NewsController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json($this->NewsRepository->getAllNews());
+        return response()->json(new NewsCollection($this->NewsRepository->getAllNews()),
+                            Response::HTTP_OK);
     }
 
     public function getDataById(Request $request): JsonResponse
     {
         $orderId = $request->route('id');
 
-        return response()->json([
-            'data' => $this->NewsRepository->getNewsById($orderId)
-        ], Response::HTTP_OK);
+        return response()->json(new NewsResources($this->NewsRepository->getDetailNewsById($orderId))
+            , Response::HTTP_OK);
     }
 
     public function insertDataNews(NewsPostRequest $request): JsonResponse
@@ -51,7 +54,9 @@ class NewsController extends Controller
         $news = $this->NewsRepository->createDataNews($validatedData);
 
         event(new NewsHistory($news['user_id'], "Created data", $news['id']));
-        return response()->json($news, Response::HTTP_CREATED);
+        return response()->json(
+            (new NewsInsertUpdateResponse($news))->action('insert'),
+            Response::HTTP_CREATED);
     }
 
     public function updateDataNews(NewsPostRequest $request): JsonResponse
@@ -83,7 +88,9 @@ class NewsController extends Controller
 
         event(new NewsHistory($news['user_id'], "Update data", $news['id']));
 
-        return response()->json($news, Response::HTTP_ACCEPTED);
+        return response()->json(
+            (new NewsInsertUpdateResponse($news))->action('update'),
+            Response::HTTP_ACCEPTED);
     }
 
     public function deleteDataNews(Request $request): JsonResponse

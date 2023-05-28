@@ -15,6 +15,13 @@ interface NewsRepositoryInterface
      * @param string $newsId
      * @return void
      */
+    public function getDetailNewsById(string $newsId);
+    /**
+     * fungsi untuk mendapatkan berita berdasarkan id
+     *
+     * @param string $newsId
+     * @return void
+     */
     public function getNewsById(string $newsId);
     /**
      * fungsi untuk menambahkan data berita

@@ -13,7 +13,29 @@ class NewsRepository implements NewsRepositoryInterface
      */
     public function getAllNews()
     {
-        return News::paginate(5);
+        return News::with([
+            'author' => function($q) {
+                $q->select('id', 'name');
+            }])
+            ->withCount('comments as jumlah_komentar')
+            ->paginate(10);
+    }
+
+     /**
+     * fungsi untuk mendapatkan berita berdasarkan id
+     *
+     * @param string $newsId
+     * @return void
+     */
+    public function getDetailNewsById(string $newsId)
+    {
+        return News::with([
+            'author' => function($q) {
+                $q->select('id', 'name');
+            },
+            'comments'])
+            ->withCount('comments as jumlah_komentar')
+            ->findOrFail($newsId);
     }
 
     /**
