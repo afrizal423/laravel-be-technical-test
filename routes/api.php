@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\CommentsController;
 use App\Http\Controllers\Api\V1\NewsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,9 +21,14 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('v1')->group(function () {
-    Route::get('news', [NewsController::class, 'index']);
-    Route::get('news/{id}', [NewsController::class, 'getDataById']);
-    Route::post('news', [NewsController::class, 'insertDataNews']);
-    Route::put('news/{id}', [NewsController::class, 'updateDataNews']);
-    Route::delete('news/{id}', [NewsController::class, 'deleteDataNews']);
+    Route::prefix('news')->group(function () {
+        Route::get('/', [NewsController::class, 'index']);
+        Route::get('/{id}', [NewsController::class, 'getDataById']);
+        Route::post('/', [NewsController::class, 'insertDataNews']);
+        Route::put('/{id}', [NewsController::class, 'updateDataNews']);
+        Route::delete('/{id}', [NewsController::class, 'deleteDataNews']);
+    });
+
+    Route::post('comment', [CommentsController::class, 'createComment']);
+
 });

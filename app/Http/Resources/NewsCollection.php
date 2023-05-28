@@ -31,9 +31,9 @@ class NewsCollection extends ResourceCollection
                 ];
             }),
             'pagination' => [
-                'per_page' => $this->perPage(),
-                'current_page' => $this->currentPage(),
-                'last_pages' => $this->lastPage(),
+                'per_page' => (int) $this->perPage(),
+                'current_page' => (int) $this->currentPage(),
+                'last_pages' => (int) $this->lastPage(),
             ],
         ];
     }

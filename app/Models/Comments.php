@@ -12,7 +12,6 @@ class Comments extends Model
 {
     use HasFactory, HasUlids;
     protected $fillable = [
-        'title',
         'comment',
         'user_id',
         'news_id'

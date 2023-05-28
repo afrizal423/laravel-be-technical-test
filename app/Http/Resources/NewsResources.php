@@ -31,8 +31,8 @@ class NewsResources extends JsonResource
                 return [
                     'id' => $cm->id,
                     'comment' => $cm->comment,
-                    'created_at' => $cm->created_at,
-                    'updated_at' => $cm->updated_at,
+                    'created_at' => (string) $cm->created_at,
+                    'updated_at' => (string) $cm->updated_at,
                     'author' => $cm->author->name,
                 ];
             })

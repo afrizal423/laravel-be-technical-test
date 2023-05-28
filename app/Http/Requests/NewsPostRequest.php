@@ -47,6 +47,12 @@ class NewsPostRequest extends FormRequest
 
     }
 
+    /**
+     * custom validation error
+     *
+     * @param Validator $validator
+     * @return void
+     */
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
@@ -56,7 +62,12 @@ class NewsPostRequest extends FormRequest
         ], 400));
     }
 
-    public function messages()
+    /**
+     * Custom message error
+     *
+     * @return array
+     */
+    public function messages(): array
     {
         return [
             'title.required' => 'judul tidak boleh kosong',

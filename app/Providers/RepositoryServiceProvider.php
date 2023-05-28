@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Interfaces\NewsRepositoryInterface;
 use App\Repository\NewsRepository;
+use App\Repository\CommentRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Interfaces\NewsRepositoryInterface;
+use App\Interfaces\CommentRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,13 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(NewsRepositoryInterface::class, NewsRepository::class);
+        $this->app->bind(
+            NewsRepositoryInterface::class,
+            NewsRepository::class);
+        $this->app->bind(
+            CommentRepositoryInterface::class,
+            CommentRepository::class
+        );
     }
 
     /**

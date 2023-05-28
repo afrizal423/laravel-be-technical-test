@@ -2,12 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Models\Comments;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class UserComments implements ShouldQueue
 {
@@ -17,10 +18,9 @@ class UserComments implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $user_id, string $news_id)
+    public function __construct(array $data)
     {
-        $this->data['user_id'] = $user_id;
-        $this->data['news_id'] = $news_id;
+        $this->data = $data;
     }
 
     /**
@@ -28,6 +28,6 @@ class UserComments implements ShouldQueue
      */
     public function handle(): void
     {
-        echo json_encode($this->data);
+        Comments::create($this->data);
     }
 }
