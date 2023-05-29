@@ -24,6 +24,10 @@ class CommentsController extends Controller
     public function createComment(CommentPostRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
+        // data diisi dengan id dari user admin yg telah login
+        $userId = auth()->user()->id;
+        $validatedData['user_id'] = $userId;
+
         $this->commentRepository->insertComment($validatedData);
         // echo json_encode($validatedData);
         return response()->json(

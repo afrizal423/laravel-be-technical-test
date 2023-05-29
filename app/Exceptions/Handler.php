@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -32,5 +33,15 @@ class Handler extends ExceptionHandler
                 ], 404);
             }
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof \Laravel\Passport\Exceptions\MissingScopeException)
+        {
+          return response()->json(['message' => 'tidak punya hak akses'], Response::HTTP_FORBIDDEN);
+        }
+
+        return parent::render($request, $exception);
     }
 }

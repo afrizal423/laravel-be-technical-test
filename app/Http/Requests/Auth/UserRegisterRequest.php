@@ -1,27 +1,23 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CommentPostRequest extends FormRequest
+class UserRegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // khusus admin dan member
-        if (auth()->user()->is_admin == 1 || auth()->user()->is_admin == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        // free access
+        return true;
     }
 
-    /**
+     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
@@ -29,8 +25,9 @@ class CommentPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment' => 'required|max:255|min:1',
-            'news_id' => 'required|exists:news,id'
+            'name' => 'required|min:3|max:100',
+            'email' => 'email|required|min:3|max:100|unique:users,email',
+            'password' => 'required|min:4|max:100'
         ];
     }
 
@@ -57,11 +54,17 @@ class CommentPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'comment.required' => 'komentar tidak boleh kosong',
-            'comment.min' => 'komentar tidak boleh kurang dari 1 karakter',
-            'comment.max' => 'komentar tidak boleh lebih dari 255 karakter',
-            'news_id.required' => 'identitas berita tidak boleh kosong',
-            'news_id.exists' => 'identitas berita tidak ditemukan',
+            'name.required' => 'nama tidak boleh kosong',
+            'name.min' => 'nama harus memiliki minimal 3 huruf',
+            'name.max' => 'nama tidak boleh lebih dari 100 huruf',
+            'email.required' => 'email tidak boleh kosong',
+            'email.email' => 'email haruslah berformat email',
+            'email.min' => 'email harus memiliki minimal 3 huruf',
+            'email.max' => 'email tidak boleh lebih dari 100 huruf',
+            'email.unique' => 'email sudah dipakai, silahkan ganti',
+            'password.required' => 'password tidak boleh kosong',
+            'password.min' => 'password harus memiliki minimal 4 huruf',
+            'password.max' => 'password tidak boleh lebih dari 100 huruf',
         ];
     }
 }

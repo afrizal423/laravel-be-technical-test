@@ -44,11 +44,9 @@ class NewsController extends Controller
         $validatedData = $request->validated();
         $path = $request->file('image_banner')->store('image', 'public');
         $validatedData['image_banner'] = Storage::url($path);
-        // echo json_encode($validatedData);
 
-        // ubah ini hari senin
-        // untuk data diisi dengan id dari user admin yg telah login
-        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
+        // data diisi dengan id dari user admin yg telah login
+        $userId = auth()->user()->id;
 
         $validatedData['user_id'] = $userId;
         $news = $this->NewsRepository->createDataNews($validatedData);
@@ -79,9 +77,9 @@ class NewsController extends Controller
             // jika tidak ada foto
             $validatedData['image_banner'] = $oldData['image_banner'];
         }
-        // ubah ini hari senin
-        // untuk data diisi dengan id dari user admin yg telah login
-        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
+
+        // data diisi dengan id dari user admin yg telah login
+        $userId = auth()->user()->id;
 
         $validatedData['user_id'] = $userId;
         $news = $this->NewsRepository->updateDataNews($idNews, $validatedData);
@@ -96,9 +94,8 @@ class NewsController extends Controller
     public function deleteDataNews(Request $request): JsonResponse
     {
         $idNews = $request->route('id');
-        // ubah ini hari senin
-        // untuk data diisi dengan id dari user admin yg telah login
-        $userId = User::where("is_admin", true)->inRandomOrder()->first()->id;
+        // data diisi dengan id dari user admin yg telah login
+        $userId = auth()->user()->id;
 
         if ($this->NewsRepository->CountDataNews($idNews) == 1) {
             // jika terdapat data

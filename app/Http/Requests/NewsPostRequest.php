@@ -13,9 +13,12 @@ class NewsPostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // ubah ini hari senin
-        // untuk user level alias strict khusus admin
-        return true;
+        // strict khusus admin
+        if (auth()->user()->is_admin) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

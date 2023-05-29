@@ -171,6 +171,8 @@ return [
 
         // repository providers
         App\Providers\RepositoryServiceProvider::class,
+
+        Laravel\Passport\PassportServiceProvider::class,
     ])->toArray(),
 
     /*

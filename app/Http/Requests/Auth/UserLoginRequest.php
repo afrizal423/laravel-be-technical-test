@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CommentPostRequest extends FormRequest
+class UserLoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // khusus admin dan member
-        if (auth()->user()->is_admin == 1 || auth()->user()->is_admin == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        // free access
+        return true;
     }
 
     /**
@@ -29,8 +25,8 @@ class CommentPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment' => 'required|max:255|min:1',
-            'news_id' => 'required|exists:news,id'
+            'email' => 'email|required',
+            'password' => 'required'
         ];
     }
 
@@ -57,11 +53,9 @@ class CommentPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'comment.required' => 'komentar tidak boleh kosong',
-            'comment.min' => 'komentar tidak boleh kurang dari 1 karakter',
-            'comment.max' => 'komentar tidak boleh lebih dari 255 karakter',
-            'news_id.required' => 'identitas berita tidak boleh kosong',
-            'news_id.exists' => 'identitas berita tidak ditemukan',
+            'email.required' => 'email tidak boleh kosong',
+            'email.email' => 'email haruslah berformat email',
+            'password.required' => 'password tidak boleh kosong',
         ];
     }
 }
