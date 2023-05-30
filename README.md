@@ -1,66 +1,150 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# News Management
+Back End Developer Technical Test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Requirements
+In supporting the running of the application, the required requirements must be met, as follows:
+- PHP 8.1
+- MySql
+- Composer
+- Supervisord
+- Redis
 
-## About Laravel
+## Roles
+In this application there are 2 roles.
+| Roles | Access |
+|-------|--------|
+|Admin  | Create,Read,Update,Delete Post, Create Comment        |
+|Member | Create Comment       |
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How To Deploy
+To deploy this application, perform the following steps:
+- Installing packages
+     Run the command below to install the required packages
+     ```sh
+     composer install
+     ```
+- Env file configuration
+     Please copy the file ```.env.example``` to ```.env```.
+     ```sh
+     cp .env.example .env
+     ```
+- Do laravel key generation
+     run command
+     ```sh
+     php artisan key:generate
+     ```
+- Database configuration
+     please open the ```.env``` file.
+     change the following line and adjust the configuration you have
+     ```env
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=
+     DB_USERNAME=
+     DB_PASSWORD=
+     ```
+- Migrate database
+     run the command below to process the database migrate
+     ```sh
+     php artisan db:migrate
+     ```
+- Initialize Passport
+     run the command below to install Passport
+     ```sh
+     php artisan passport:install
+     ```
+- Running queue process
+     In running the queue requires [supervisord](http://supervisord.org/) as a process in the background.
+     Run the command below to install supervisord
+     ```sh
+     sudo apt-get install supervisor
+     cd /etc/supervisor/conf.d #process goes into the supervisord directory
+     ```
+     After that, create a file named ```laravel-worker.conf``` in the ```conf.d``` folder.
+     Open the file, and enter the code below.
+     ```conf
+     [program:laravel-worker]
+     process_name=%(program_name)s_%(process_num)02d
+     command=/usr/bin/php <your_project_directory>/artisan queue:work --sleep=3 --tries=3
+     autostart=true
+     autorestart=true
+     user=root
+     numprocs=5
+     redirect_stderr=true
+     stdout_logfile=<your_project_directory>/storage/logs/worker.log
+     ```
+     Please change ```<your_project_directory>``` with your directory address. Then save the file.
+     Then run the following command to run the process from the supervisord.
+     ```sh
+     sudo supervisorctl reread
+     sudo supervisorctl update
+     sudo supervisorctl start laravel-worker.conf
+     ```
+- Run servers
+     To run the application, run the following command.
+     ```sh
+     php artisan serve
+     ```
+     If you are at the production level, you can directly configure virtual hosts on web server.
+     - Example of Apache
+        ```conf
+        NameVirtualHost *:80
+        Listen 8080
+        
+        <VirtualHost *:80>
+            ServerAdmin admin@example.com
+            ServerName newmanagement.dev
+            ServerAlias www.newmanagement.dev
+            DocumentRoot <your_project_directory>/public
+            
+            <Directory <your_project_directory>/public/>
+                    Options Indexes FollowSymLinks MultiViews
+                    AllowOverride All
+                    Order allow,deny
+                    allow from all
+                    Require all granted
+            </Directory>
+            
+            LogLevel debug
+            ErrorLog ${APACHE_LOG_DIR}/error.log
+            CustomLog ${APACHE_LOG_DIR}/access.log combined
+        </VirtualHost>
+        ```
+    - Example of Nginx
+        ```conf
+        server {
+            listen 80;
+            server_name server_domain_or_IP;
+            root <your_project_directory>/public;
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+            add_header X-Frame-Options "SAMEORIGIN";
+            add_header X-XSS-Protection "1; mode=block";
+            add_header X-Content-Type-Options "nosniff";
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+            index index.html index.htm index.php;
 
-## Learning Laravel
+            charset utf-8;
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+            location / {
+                try_files $uri $uri/ /index.php?$query_string;
+            }
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+            location = /favicon.ico { access_log off; log_not_found off; }
+            location = /robots.txt  { access_log off; log_not_found off; }
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+            error_page 404 /index.php;
 
-## Laravel Sponsors
+            location ~ \.php$ {
+                fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                include fastcgi_params;
+            }
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+            location ~ /\.(?!well-known).* {
+                deny all;
+            }
+        }
+        ```
+        Please change ```<your_project_directory>``` with your directory address.
