@@ -66,7 +66,7 @@ To deploy this application, perform the following steps:
      ```conf
      [program:laravel-worker]
      process_name=%(program_name)s_%(process_num)02d
-     command=/usr/bin/php <your_project_directory>/artisan queue:work --sleep=3 --tries=3
+     command=/usr/bin/php <your_project_directory>/artisan queue:listen --sleep=3 --tries=3
      autostart=true
      autorestart=true
      user=root
