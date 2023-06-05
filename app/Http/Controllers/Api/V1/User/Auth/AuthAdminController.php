@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\User;
+namespace App\Http\Controllers\Api\V1\User\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -10,7 +10,7 @@ use App\Interfaces\UserAuthInterface;
 use App\Http\Requests\Auth\UserLoginRequest;
 use App\Http\Requests\Auth\UserRegisterRequest;
 
-class AuthController extends Controller implements UserAuthInterface
+class AuthAdminController extends Controller implements UserAuthInterface
 {
     private AuthInterface $authRepository;
 
@@ -32,21 +32,10 @@ class AuthController extends Controller implements UserAuthInterface
         return response()->json(['token' => $token]);
     }
 
-    public function registerAdmin(UserRegisterRequest $request)
+    public function register(UserRegisterRequest $request)
     {
         $validatedData = $request->validated();
         $validatedData['is_admin'] = true;
-        $user = $this->authRepository->register($validatedData);
-        return response()->json([
-            'message' => 'success insert new data user',
-            'data' => $user
-        ], Response::HTTP_CREATED);
-    }
-
-    public function registerMember(UserRegisterRequest $request)
-    {
-        $validatedData = $request->validated();
-        $validatedData['is_admin'] = false;
         $user = $this->authRepository->register($validatedData);
         return response()->json([
             'message' => 'success insert new data user',

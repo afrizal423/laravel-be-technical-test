@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\V1\CommentsController;
 use App\Http\Controllers\Api\V1\NewsController;
+use App\Http\Controllers\Api\V1\User\Auth\AuthAdminController;
+use App\Http\Controllers\Api\V1\User\Auth\AuthMemberController;
 use App\Http\Controllers\Api\V1\User\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,14 +26,14 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::prefix('admin')->group(function () {
-            Route::post('/login', [AuthController::class, 'login']);
-            Route::post('/register', [AuthController::class, 'registerAdmin']);
+            Route::post('/login', [AuthAdminController::class, 'login']);
+            Route::post('/register', [AuthAdminController::class, 'register']);
         });
         Route::prefix('member')->group(function () {
-            Route::post('/login', [AuthController::class, 'login']);
-            Route::post('/register', [AuthController::class, 'registerMember']);
+            Route::post('/login', [AuthMemberController::class, 'login']);
+            Route::post('/register', [AuthMemberController::class, 'register']);
         });
-        Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:api','scope:admin,member']);
+        Route::post('/logout', [AuthAdminController::class, 'logout'])->middleware(['auth:api','scope:admin,member']);
     });
     Route::prefix('news')->group(function () {
         Route::get('/', [NewsController::class, 'index']);
