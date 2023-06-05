@@ -148,3 +148,6 @@ To deploy this application, perform the following steps:
         }
         ```
         Please change ```<your_project_directory>``` with your directory address.
+## Documentation
+Via postman
+https://documenter.getpostman.com/view/8073012/2s93mATeiL

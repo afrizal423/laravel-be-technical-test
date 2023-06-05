@@ -13,11 +13,16 @@ interface UserAuthInterface
      * @param Request $request
      * @return void
      */
+    /**
+     * lebih ramping lagi jika memakai konsep
+     * Open/Closed Principle (OCP), Liskov Substitution Principle (LSP)
+     * jadi hanya tinggal login, register, logout
+     * pada setiap controller auth disetiap role
+     * lalu tinggal di implements
+     */
     public function login(UserLoginRequest $request);
 
-    public function registerAdmin(UserRegisterRequest $request);
-
-    public function registerMember(UserRegisterRequest $request);
+    public function register(UserRegisterRequest $request);
 
     public function logout(Request $request);
 
